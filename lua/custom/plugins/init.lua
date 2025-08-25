@@ -56,13 +56,6 @@ return {
       },
     },
   },
-  -- {
-  --   'loctvl842/monokai-pro.nvim',
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd.colorscheme 'monokai-pro'
-  --   end,
-  -- },
   {
     'akinsho/toggleterm.nvim',
     version = '*',
@@ -72,77 +65,19 @@ return {
     },
   },
   {
-    'yetone/avante.nvim',
-    event = 'VeryLazy',
-    version = false, -- Never set this value to "*"! Never!
-    opts = {
-      provider = 'claude',
-      providers = {
-        claude = {
-          endpoint = 'https://api.anthropic.com',
-          model = 'claude-sonnet-4-20250514',
-          timeout = 30000, -- Timeout in milliseconds
-          extra_request_body = {
-            temperature = 0.75,
-            max_tokens = 20480,
-          },
-        },
-      },
-      file_selector = {
-        provider = 'telescope',
-      },
-      selector = {
-        provider = 'telescope',
-      },
-    },
-    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = 'make',
-    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    'greggh/claude-code.nvim',
     dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-      'stevearc/dressing.nvim',
-      'nvim-lua/plenary.nvim',
-      'MunifTanjim/nui.nvim',
-      --- The below dependencies are optional,
-      'nvim-telescope/telescope.nvim', -- for file_selector provider telescope
-      'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
-      {
-        -- support for image pasting
-        'HakonHarnes/img-clip.nvim',
-        event = 'VeryLazy',
-        opts = {
-          -- recommended settings
-          default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-              insert_mode = true,
-            },
-            -- required for Windows users
-            use_absolute_path = true,
-          },
-        },
-      },
-      {
-        -- Make sure to set this up properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = {
-          file_types = { 'markdown', 'Avante' },
-        },
-        ft = { 'markdown', 'Avante' },
-      },
+      'nvim-lua/plenary.nvim', -- Required for git operations
     },
-  },
-  {
-    'supermaven-inc/supermaven-nvim',
     config = function()
-      require('supermaven-nvim').setup {
-        keymaps = {
-          accept_suggestion = '<C-y>',
-          clear_suggestion = '<C-]>',
-          accept_word = '<C-j>',
+      require('claude-code').setup {
+        window = {
+          position = 'vertical',
         },
       }
     end,
+  },
+  {
+    'github/copilot.vim',
   },
 }
