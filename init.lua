@@ -664,9 +664,6 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        eslint = {
-          enable = true,
-        },
         jsonls = {
           enable = true,
         },
@@ -686,6 +683,10 @@ require('lazy').setup({
         --   enable = true,
         -- },
         --
+
+        ruby_lsp = {
+          enable = true,
+        },
 
         lua_ls = {
           -- cmd = { ... },
@@ -747,7 +748,10 @@ require('lazy').setup({
       {
         '<leader>f',
         function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
+          require('conform').format {
+            async = true,
+            lsp_format = 'never',
+          }
         end,
         mode = '',
         desc = '[F]ormat buffer',
@@ -756,30 +760,27 @@ require('lazy').setup({
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        if disable_filetypes[vim.bo[bufnr].filetype] then
+        -- Skip formatting for large files
+        if vim.fn.getfsize(vim.api.nvim_buf_get_name(bufnr)) > 200000 then
           return nil
-        else
-          return {
-            timeout_ms = 3000,
-            lsp_format = 'fallback',
-          }
         end
+
+        return {
+          timeout_ms = 500,
+          lsp_format = 'never',
+        }
       end,
       formatters_by_ft = {
+        typescript = { 'prettier', 'eslint_d', stop_after_first = true },
+        typescriptreact = { 'prettier', 'eslint_d', stop_after_first = true },
+        javascript = { 'prettier', 'eslint_d', stop_after_first = true },
+        javascriptreact = { 'prettier', 'eslint_d', stop_after_first = true },
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
-        typescript = { 'eslint_d' },
-        typescriptreact = { 'eslint_d' },
-        javascript = { 'eslint_d' },
-        javascriptreact = { 'eslint_d' },
+      },
+      formatters = {
+        prettier = {
+          require_cwd = true, -- Only run if prettier config exists in project
+        },
       },
     },
   },
@@ -896,28 +897,6 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
-    end,
-  },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -1010,6 +989,7 @@ require('lazy').setup({
   -- Or use telescope!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
+  { import = 'custom.keymaps' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -1031,8 +1011,6 @@ require('lazy').setup({
     },
   },
 })
-
-require 'custom/keymaps'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

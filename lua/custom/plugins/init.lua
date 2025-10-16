@@ -46,13 +46,11 @@ return {
     ft = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
     opts = {
       settings = {
-        tsserver_plugins = {},
-        separate_diagnostic_server = true,
-        publish_diagnostic_on = 'change',
-        expose_as_code_action = 'all',
-        tsserver_max_memory = 4096,
-        complete_function_calls = false,
-        documentFormattingProvider = false,
+        complete_function_calls = true,
+        jsx_close_tag = {
+          enable = true,
+          filetypes = { 'javascriptreact', 'typescriptreact' },
+        },
       },
     },
   },
@@ -65,19 +63,14 @@ return {
     },
   },
   {
-    'greggh/claude-code.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim', -- Required for git operations
-    },
-    config = function()
-      require('claude-code').setup {
-        window = {
-          position = 'vertical',
-        },
-      }
-    end,
+    'github/copilot.vim',
   },
   {
-    'github/copilot.vim',
+    'rebelot/kanagawa.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('kanagawa').load 'wave'
+    end,
   },
 }
