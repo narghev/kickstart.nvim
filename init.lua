@@ -684,7 +684,7 @@ require('lazy').setup({
         -- },
         --
 
-        ruby_lsp = {
+        solargraph = {
           enable = true,
         },
 
