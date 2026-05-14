@@ -106,6 +106,9 @@ do
   -- NOTE: You can change these options as you wish!
   --  For more options, you can see `:help option-list`
 
+  -- Enable 24-bit RGB color in the terminal so colorschemes render their actual colors
+  vim.o.termguicolors = true
+
   -- Make line numbers default
   vim.o.number = true
   -- You can also add relative line numbers, to help with jumping.
@@ -683,9 +686,7 @@ do
 
     jsonls = {},
     tailwindcss = {},
-    solargraph = {},
-
-    stylua = {}, -- Used to format Lua code
+    ruby_lsp = {},
 
     -- Special Lua Config, as recommended by neovim help docs
     lua_ls = {
@@ -741,7 +742,10 @@ do
   -- You can press `g?` for help in this menu.
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
-    -- You can add other tools here that you want Mason to install
+    'stylua', -- Lua formatter (used by conform)
+    'typescript-language-server', -- LS backing typescript-tools.nvim
+    'prettier', -- JS/TS formatter (used by conform)
+    'eslint_d', -- JS/TS linter/formatter (used by conform)
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -892,7 +896,7 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'regex', 'vim', 'vimdoc' }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
@@ -963,9 +967,6 @@ do
 
   -- Load custom plugins from `lua/custom/plugins/*.lua`
   require 'custom.plugins'
-
-  -- Load custom keymaps
-  require 'custom.keymaps'
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
